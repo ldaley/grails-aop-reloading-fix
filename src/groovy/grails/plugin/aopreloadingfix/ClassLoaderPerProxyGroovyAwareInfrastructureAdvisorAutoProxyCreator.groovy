@@ -31,6 +31,10 @@ class ClassLoaderPerProxyGroovyAwareInfrastructureAdvisorAutoProxyCreator extend
 		super.setBeanClassLoader(classLoader)
 	}
 	
+	protected Object getCacheKey(Class<?> beanClass, String beanName) {
+		beanClass.hashCode() + "_" + beanName
+	}
+	
 	protected Object createProxy(Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
 		setProxyClassLoader(new GrailsClassLoader(baseLoader, null, null))
 		def proxy = super.createProxy(beanClass, beanName, specificInterceptors, targetSource)

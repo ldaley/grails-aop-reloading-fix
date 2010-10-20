@@ -38,6 +38,10 @@ class ClassLoaderPerProxyGroovyAwareAspectJAwareAdvisorAutoProxyCreator extends 
 		proxy
 	}
 	
+	protected Object getCacheKey(Class<?> beanClass, String beanName) {
+		beanClass.hashCode() + "_" + beanName
+	}
+	
 	protected boolean shouldProxyTargetClass(Class<?> beanClass, String beanName) {
 		GroovyObject.class.isAssignableFrom(beanClass) || super.shouldProxyTargetClass(beanClass, beanName)
 	}
