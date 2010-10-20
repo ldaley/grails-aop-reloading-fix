@@ -31,14 +31,15 @@ class AopReloadingFixGrailsPlugin {
 
 	def doWithSpring = {
 		if (isEnvironmentClassReloadable()) {
+			def name = getAutoProxyCreatorBeanName()
+			
 			def grailsConfig = application.config.grails
 			def springConfig = grailsConfig.spring
-			if(springConfig.disable.aspectj.autoweaving) {
-				log.warn("not fixing aop reload because aspectj autoweaving is disabled")
+			if (springConfig.disable.aspectj.autoweaving) {
+				"$name"(getInfrastructureAutoProxyCreatorClass())
 			} else {
-				def name = getAutoProxyCreatorBeanName()
-				def clazz = getAutoProxyCreatorClass()
-				
+				def clazz = isAspectJAware() ? getAspectJAwareAutoProxyCreatorClass() : getInfrastructureAutoProxyCreatorClass()
+
 				// we are intending to replace the auto proxy creator created by the core grails plugin. 
 				"$name"(clazz)
 			}
@@ -51,8 +52,24 @@ class AopReloadingFixGrailsPlugin {
 		"org.springframework.aop.config.internalAutoProxyCreator"
 	}
 	
-	def getAutoProxyCreatorClass() {
+	def getAspectJAwareAutoProxyCreatorClass() {
 		getClass().classLoader.loadClass("grails.plugin.aopreloadingfix.ClassLoaderPerProxyGroovyAwareAspectJAwareAdvisorAutoProxyCreator")
+	}
+
+	def getInfrastructureAutoProxyCreatorClass() {
+		getClass().classLoader.loadClass("grails.plugin.aopreloadingfix.ClassLoaderPerProxyGroovyAwareInfrastructureAdvisorAutoProxyCreator")
+	}
+	
+	/**
+	 * GroovyAwareAspectJAwareAdvisorAutoProxyCreator is not available in all versions, test for it.
+	 */
+	boolean isAspectJAware() {
+		try {
+			getClass().classLoader.loadClass("org.codehaus.groovy.grails.aop.framework.autoproxy.GroovyAwareAspectJAwareAdvisorAutoProxyCreator")
+			true
+		} catch (ClassNotFoundException e) {
+			false
+		}
 	}
 	
 	static isEnvironmentClassReloadable() {

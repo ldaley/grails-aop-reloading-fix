@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *	   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,12 @@ package grails.plugin.aopreloadingfix
 
 import org.springframework.aop.TargetSource
 import org.codehaus.groovy.grails.compiler.GrailsClassLoader
-import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator
+import org.codehaus.groovy.grails.aop.framework.autoproxy.GroovyAwareInfrastructureAdvisorAutoProxyCreator
 
 /**
  * Circumvents GRAILS-6370 by using a new class loader for each proxy.
  */
-class ClassLoaderPerProxyGroovyAwareAspectJAwareAdvisorAutoProxyCreator extends AnnotationAwareAspectJAutoProxyCreator {
+class ClassLoaderPerProxyGroovyAwareInfrastructureAdvisorAutoProxyCreator extends GroovyAwareInfrastructureAdvisorAutoProxyCreator {
 
 	private ClassLoader baseLoader = null;
 		
@@ -38,8 +38,4 @@ class ClassLoaderPerProxyGroovyAwareAspectJAwareAdvisorAutoProxyCreator extends 
 		proxy
 	}
 	
-	protected boolean shouldProxyTargetClass(Class<?> beanClass, String beanName) {
-		GroovyObject.class.isAssignableFrom(beanClass) || super.shouldProxyTargetClass(beanClass, beanName)
-	}
-
 }
