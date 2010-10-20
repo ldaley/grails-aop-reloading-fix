@@ -8,6 +8,12 @@ All you need to do is install it:
 
     grails install-plugin aop-reloading-fix
 
+## Version Compatibility
+
+This plugin should be compatible with all versions from 1.2.0 through to 1.3.5.
+
+It has been tested on 1.2.0 and 1.3.5.
+
 ## How it works
 
 This plugin modifies with way AOP proxies are created in a reloadable environment to make them reload capable. It has no effect when running in a non reloadable environment such as production.
